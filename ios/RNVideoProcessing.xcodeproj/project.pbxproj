@@ -19,7 +19,6 @@
 		246271C31DDEF8AA003781DB /* RNVideoTrimmer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 246271B71DDEF8AA003781DB /* RNVideoTrimmer.swift */; };
 		246271C41DDEF8AA003781DB /* RNVideoTrimmerBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 246271B81DDEF8AA003781DB /* RNVideoTrimmerBridge.m */; };
 		246271C51DDEF8AA003781DB /* VideoProcessingGPUFilters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 246271B91DDEF8AA003781DB /* VideoProcessingGPUFilters.swift */; };
-		24F055861E2E4AAD009E0196 /* SDAVAssetExportSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 24F055851E2E4AAD009E0196 /* SDAVAssetExportSession.m */; };
 		24F466D81DD9F1CB0012172B /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24F466981DD9EB8B0012172B /* AVFoundation.framework */; };
 		24F466D91DD9F1CB0012172B /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24F4669A1DD9EB9B0012172B /* CoreMedia.framework */; };
 		24F466DA1DD9F1CB0012172B /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24F4669B1DD9EB9B0012172B /* CoreVideo.framework */; };
@@ -246,7 +245,6 @@
 				246271BA1DDEF8AA003781DB /* ICGRulerView.m in Sources */,
 				246271C41DDEF8AA003781DB /* RNVideoTrimmerBridge.m in Sources */,
 				246271BF1DDEF8AA003781DB /* RNTrimmerViewManager.swift in Sources */,
-				24F055861E2E4AAD009E0196 /* SDAVAssetExportSession.m in Sources */,
 				246271C01DDEF8AA003781DB /* RNVideoPlayer.swift in Sources */,
 				246271BE1DDEF8AA003781DB /* RNTrimmerViewBridge.m in Sources */,
 				246271BD1DDEF8AA003781DB /* RNTrimmerView.swift in Sources */,
@@ -352,7 +350,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = RNVideoProcessing;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "RNVideoProcessing-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "RNVideoProcessing/RNVideoProcessing-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.2;
 			};
@@ -373,7 +371,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = RNVideoProcessing;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "RNVideoProcessing-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "RNVideoProcessing/RNVideoProcessing-Bridging-Header.h";
 				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
