@@ -626,4 +626,8 @@ class RNVideoTrimmer: NSObject {
     }
     return useQuality
   }
+  
+  @objc static func requiresMainQueueSetup() -> Bool {
+    return true
+  }
 }
