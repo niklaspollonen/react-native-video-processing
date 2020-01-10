@@ -21,6 +21,9 @@ enum QUALITY_ENUM: String {
 
 @objc(RNVideoTrimmer)
 class RNVideoTrimmer: NSObject {
+  @objc class func requiresMainQueueSetup() -> Bool {
+    return true
+  }
 
   @objc func getVideoOrientationFromAsset(asset : AVAsset) -> UIImage.Orientation {
     let videoTrack: AVAssetTrack? = asset.tracks(withMediaType: .video)[0]
@@ -278,7 +281,18 @@ class RNVideoTrimmer: NSObject {
     let mixComposition = AVMutableComposition()
     let track = mixComposition.addMutableTrack(withMediaType: .video, preferredTrackID: Int32(kCMPersistentTrackID_Invalid))
 
-
+    //fix issue where boomerang effect on main camera video is rotated 90 degrees
+    var transforms: CGAffineTransform?
+    transforms = track?.preferredTransform
+    transforms = CGAffineTransform(rotationAngle: 0)
+    //detect camera type
+    if(options.object(forKey: "cameraType") as? String == "back"){
+      transforms = transforms?.concatenating(CGAffineTransform(rotationAngle: CGFloat(90.0 * .pi / 180)))
+      transforms = transforms?.concatenating(CGAffineTransform(translationX: 640, y: 0))
+      track?.preferredTransform = transforms!
+    }
+    //end of fix
+    
     var outputURL = documentDirectory.appendingPathComponent("output")
     var finalURL = documentDirectory.appendingPathComponent("output")
     do {
@@ -562,6 +576,63 @@ class RNVideoTrimmer: NSObject {
       callback( ["Failed to convert base64: \(error.localizedDescription)", NSNull()] )
     }
   }
+
+
+  @objc func getTrimmerPreviewImages(_ source: String, startTime: Float = 0, endTime: Float, step: Int = 1, maximumSize: NSDictionary, format: String = "base64", callback: @escaping RCTResponseSenderBlock) {
+    let sourceURL = getSourceURL(source: source)
+    let asset = AVAsset(url: sourceURL)
+
+    var width: CGFloat = 1080
+    if let _width = maximumSize.object(forKey: "width") as? CGFloat {
+      width = _width
+    }
+    var height: CGFloat = 1080
+    if let _height = maximumSize.object(forKey: "height") as? CGFloat {
+      height = _height
+    }
+
+    let imageGenerator = AVAssetImageGenerator(asset: asset)
+    imageGenerator.maximumSize = CGSize(width: width, height: height)
+    imageGenerator.appliesPreferredTrackTransform = true
+
+    do {
+      var returnData:  Array<Any> = [];
+
+      for second in stride(from: Int(startTime), to: Int(endTime), by: step) {
+        let timestamp = CMTime(seconds: Double(second), preferredTimescale: 600)
+        let imageRef = try imageGenerator.copyCGImage(at: timestamp, actualTime: nil)
+        let image = UIImage(cgImage: imageRef)
+        // if ( format == "base64" ) {
+        let imgData = image.pngData()
+        let base64string = imgData?.base64EncodedString(options: Data.Base64EncodingOptions.init(rawValue: 0))
+        if base64string != nil {
+          returnData.append(base64string)
+        } else {
+          callback( ["Unable to convert to base64)", NSNull()]  )
+        }
+        // } else if ( format == "JPEG" ) {
+        //   let imgData = image.jpegData(compressionQuality: 1)
+
+        //   let fileName = ProcessInfo.processInfo.globallyUniqueString
+        //   let fullPath = "\(NSTemporaryDirectory())\(fileName).jpg"
+
+        //   try imgData?.write(to: URL(fileURLWithPath: fullPath), options: .atomic)
+
+        //   let imageWidth = imageRef.width
+        //   let imageHeight = imageRef.height
+        //   let imageFormattedData: [AnyHashable: Any] = ["uri": fullPath, "width": imageWidth, "height": imageHeight]
+
+        //   returnData.append(imageFormattedData)
+        // } else {
+          //  callback( ["Failed format. Expected one of 'base64' or 'JPEG'", NSNull()] )
+        // }
+      }
+      callback( [NSNull(), returnData] )
+    } catch {
+      callback( ["Failed to convert base64: \(error.localizedDescription)", NSNull()] )
+    }
+  }
+
 
   func randomString() -> String {
     let letters: NSString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
